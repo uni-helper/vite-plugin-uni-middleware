@@ -17,7 +17,7 @@ declare module "virtual:uni-middleware" {
         method: "navigateTo" | "redirectTo" | "switchTab" | "reLaunch";
         options: Record<string, any>;
       };
-  export type Middleware = (to: Page, from: Page) => MiddlewareReturn;
+  export type Middleware = (to: Page, from?: Page) => MiddlewareReturn;
 
   export const middlewares: {
     global: Middleware[];

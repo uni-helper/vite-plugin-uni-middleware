@@ -1,16 +1,16 @@
 # @uni-helper/vite-plugin-uni-middleware
 
-**WIP** Use route middleware in uni-app with Vite.
+**WIP** 在 Vite 驱动的 uni-app 中使用路由中间件
 
-English | [简体中文](./README.ZhCN.md)
+[English](./README.md) | 简体中文
 
-## Installation
+## 安装
 
 ```bash
 pnpm i -D @uni-helper/vite-plugin-uni-middleware
 ```
 
-## Usage
+## 使用
 
 ```ts
 // vite.config.ts
@@ -22,7 +22,7 @@ export default defineConfig({
 });
 ```
 
-Define the middleware in `src/middleware`
+在 `src/middleware` 中定义中间件
 
 ```ts
 // src/middleware/auth.ts
@@ -37,7 +37,7 @@ export default defineMiddleware((to, from) => {
 });
 ```
 
-Add middleware config on global or page in pages.json
+在 pages.json 中添加全局或页面的中间件配置
 
 ```json
 // pages.json
@@ -52,13 +52,13 @@ Add middleware config on global or page in pages.json
 }
 ```
 
-## Configuration
+## 配置
 
 see [types.ts](./src/types.ts)
 
-## Notes
+## 注意
 
-If you used [vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages), you will create `pages.d.ts` to define type of `middleware`
+如果你使用 [vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages), 创建 `pages.d.ts` 来声明 `middleware` 的类型
 
 ```ts
 declare module "@uni-helper/vite-plugin-uni-pages" {
@@ -69,7 +69,7 @@ declare module "@uni-helper/vite-plugin-uni-pages" {
 export {};
 ```
 
-If you added config for page, just only use route-block
+若要为页面添加配置，只需使用 route-block
 
 ```vue
 <route>

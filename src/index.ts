@@ -1,71 +1,68 @@
-import { readFileSync } from "fs";
 import { resolve } from "path";
-import { Plugin, ResolvedConfig } from "vite";
+import { ModuleNode, normalizePath, Plugin, ResolvedConfig } from "vite";
 import { virtualModuleId, resolvedVirtualModuleId } from "./constant";
-import { parse } from "jsonc-parser";
-import { scanMiddlewares } from "./scan";
+import { Context } from "./context";
+import { ResolvedOptions, UserOptions } from "./types";
 
-export const VitePluginUniMiddleware = (): Plugin => {
-  let config: ResolvedConfig;
+const resolveOptions = (userOptions: UserOptions): ResolvedOptions => {
+  return {
+    middlewareDir: "src/middleware",
+    ...userOptions,
+  };
+};
+
+export const VitePluginUniMiddleware = (
+  userOptions: UserOptions = {}
+): Plugin => {
+  const options = resolveOptions(userOptions);
+  const ctx = new Context(options);
   return {
     name: "vite-plugin-uni-middleware",
+    configureServer({ watcher, moduleGraph, ws }) {
+      const pagesJsonPath = normalizePath(
+        resolve(ctx.config.root, "src/pages.json")
+      );
+      watcher.add([pagesJsonPath, options.middlewareDir]);
+      const reloadModule = (module: ModuleNode | undefined, path = "*") => {
+        if (module) {
+          moduleGraph.invalidateModule(module);
+          if (ws) {
+            ws.send({
+              path,
+              type: "full-reload",
+            });
+          }
+        }
+      };
+      const updateVirtualModule = () => {
+        const module = moduleGraph.getModuleById(resolvedVirtualModuleId);
+        reloadModule(module);
+      };
+
+      watcher.on("change", async (path) => {
+        // TODO: simple filter
+        if (pagesJsonPath === path || path.includes(options.middlewareDir)) {
+          updateVirtualModule();
+        }
+      });
+      watcher.on("unlink", async (path) => {
+        // TODO: simple filter
+        if (path.includes(options.middlewareDir)) {
+          updateVirtualModule();
+        }
+      });
+    },
     configResolved(_config) {
-      config = _config;
+      ctx.config = _config;
     },
     async resolveId(id) {
       if (id === virtualModuleId) {
         return resolvedVirtualModuleId;
       }
     },
-    async load(id) {
+    load(id) {
       if (id === resolvedVirtualModuleId) {
-        const middlewares = await scanMiddlewares();
-        const pagesJsonRaw = readFileSync(
-          resolve(config.root, "src/pages.json"),
-          {
-            encoding: "utf-8",
-          }
-        );
-        const pagesJson = parse(pagesJsonRaw);
-
-        const imports = middlewares.map(
-          (v) => `import ${v.pascalName} from "${v.path}";`
-        );
-        const global = pagesJson.middleware
-          ? pagesJson.middleware
-              .map((p: string) => {
-                const middleware = middlewares.find((v) => v.camelName === p);
-                if (middleware) {
-                  return middleware.pascalName;
-                }
-                return "";
-              })
-              .filter((v: string) => v)
-          : [];
-        const pages = pagesJson.pages
-          ? pagesJson.pages.map((page: any) => {
-              const pageMiddlewares = page.middleware
-                ? page.middleware
-                    .map((p: string) => {
-                      const middleware = middlewares.find(
-                        (v) => v.camelName === p
-                      );
-                      if (middleware) {
-                        return middleware.pascalName;
-                      }
-                      return "";
-                    })
-                    .filter((v: string) => v)
-                : [];
-              return `"${page.path}": [${pageMiddlewares.join(",")}]`;
-            })
-          : [];
-        const code = `${imports.join("\n")}
-        export const middlewares = {
-          global: [${global.join(",")}],
-          ${pages.join(",")}
-        }`;
-        return code;
+        return ctx.virtualModule();
       }
     },
   };

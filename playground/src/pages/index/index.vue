@@ -1,46 +1,32 @@
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png" />
-    <view class="text-area">
-      <text class="title">{{ title }}</text>
-    </view>
-    <button @click="nav">test</button>
+  <view>
+    <view>index page</view>
+    <view>isLogin: {{ store.isLogin }}</view>
+    <view>isVip: {{ store.isVip }}</view>
+    <navigator
+      v-for="nav in pages"
+      :url="nav.path"
+      hover-class="navigator-hover"
+    >
+      <button>{{ nav.name }}</button>
+    </navigator>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-const title = ref("Hello");
-const nav = () =>
-  uni.navigateTo({
-    url: "/pages/index/test",
-  });
+import { useStore } from "../../store";
+
+const store = useStore();
+const pages = [
+  {
+    path: "/pages/auth/index",
+    name: "Auth Page",
+  },
+  {
+    path: "/pages/login/index",
+    name: "Login Page",
+  },
+];
 </script>
 
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
-  display: flex;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
-}
-</style>
+<route type="home"></route>

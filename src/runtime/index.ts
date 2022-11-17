@@ -1,10 +1,10 @@
 import type { Plugin } from "vue";
 import { middlewares } from "virtual:uni-middleware";
-import { Page, UserOptions } from "./types";
+import { Page } from "./types";
+import { Middleware } from "./types";
+export * from "./types";
 
-export const createNavigationGuardPlugin = (
-  userOptions: UserOptions = {}
-): Plugin => {
+export function createNavigationGuardPlugin(): Plugin {
   let from: Page;
   let to: Page;
   return {
@@ -53,7 +53,8 @@ export const createNavigationGuardPlugin = (
       });
     },
   };
-};
+}
 
-export const defineMiddleware = (middleware: typeof middlewares[0][0]) =>
-  middleware;
+export function defineMiddleware(middleware: Middleware) {
+  return middleware;
+}

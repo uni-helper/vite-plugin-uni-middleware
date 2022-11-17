@@ -1,13 +1,4 @@
 import type { ComponentPublicInstance } from "vue";
-export interface Options {
-  pages: {
-    path: string;
-    [x: string]: any;
-  }[];
-}
-
-export interface UserOptions extends Partial<Options> {}
-export interface ResolvedOptions extends Options {}
 
 export interface Page extends ComponentPublicInstance {
   $mpType: string;
@@ -15,3 +6,14 @@ export interface Page extends ComponentPublicInstance {
   $vm: Page;
   route: string;
 }
+
+export type MiddlewareReturn =
+  | void
+  | boolean
+  | string
+  | {
+      url: string;
+      method: "navigateTo" | "redirectTo" | "switchTab" | "reLaunch";
+      options: Record<string, any>;
+    };
+export type Middleware = (to: Page, from?: Page) => MiddlewareReturn;

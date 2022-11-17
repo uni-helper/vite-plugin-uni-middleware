@@ -2,19 +2,18 @@ import fg from "fast-glob";
 import { basename, dirname, extname, join, relative, resolve } from "path";
 import { pascalCase, splitByCase, camelCase } from "scule";
 import { normalizePath } from "vite";
+import { ResolvedOptions, Middleware } from "./types";
 
-export const scanMiddlewares = async () => {
-  let dir = "src/middleware";
-  const middlewares: { pascalName: string; camelName: string; path: string }[] =
-    [];
+export const scanMiddlewares = async (options: ResolvedOptions) => {
+  const middlewares: Middleware[] = [];
   const files = await fg("**/*.(js|ts)", {
     ignore: ["node_modules", ".git", "**/__*__/*"],
     onlyFiles: true,
-    cwd: resolve(process.cwd(), dir),
+    cwd: resolve(process.cwd(), options.middlewareDir),
   });
   files.sort();
   const cwd = process.cwd();
-  dir = resolve(cwd, dir);
+  const dir = resolve(cwd, options.middlewareDir);
   for (let file of files) {
     const filePath = join(dir, file);
     const dirNameParts = splitByCase(
@@ -35,12 +34,14 @@ export const scanMiddlewares = async () => {
     }
     const middlewareName =
       pascalCase(middlewareNameParts) + pascalCase(fileNameParts);
-    const pascalName = pascalCase(middlewareName).replace(/["']/g, "");
-    const camelName = camelCase(pascalName);
-    if (!middlewares.find((m) => m.pascalName === pascalName)) {
+
+    const value = pascalCase(middlewareName).replace(/["']/g, "");
+    const name = camelCase(value);
+
+    if (!middlewares.find((m) => m.name === name)) {
       middlewares.push({
-        pascalName,
-        camelName,
+        name,
+        value,
         path: normalizePath(filePath),
       });
     }
