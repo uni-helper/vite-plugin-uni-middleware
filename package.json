@@ -1,7 +1,7 @@
 {
   "name": "@uni-helper/vite-plugin-uni-middleware",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "packageManager": "pnpm@7.16.1",
   "description": "Use route middleware in uni-app with Vite.",
   "author": "KeJun",
