@@ -2,7 +2,7 @@
 
 **WIP** Use route middleware in uni-app with Vite.
 
-English | [简体中文](./README.ZhCN.md)
+English | [简体中文](./README.zhCN.md)
 
 ## Installation
 
