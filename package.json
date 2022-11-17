@@ -65,6 +65,8 @@
     "vue": "^3.2.45"
   },
   "dependencies": {
-    "jsonc-parser": "^3.2.0"
+    "fast-glob": "^3.2.12",
+    "jsonc-parser": "^3.2.0",
+    "scule": "^1.0.0"
   }
 }

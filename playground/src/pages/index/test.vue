@@ -4,6 +4,7 @@
 
 <route lang="json">
 {
-  "test": 1
+  "test": 1,
+  "middleware": ["dirAbcD"]
 }
 </route>

@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { Plugin, ResolvedConfig } from "vite";
 import { virtualModuleId, resolvedVirtualModuleId } from "./constant";
 import { parse } from "jsonc-parser";
+import { scanMiddlewares } from "./scan";
 
 export const VitePluginUniMiddleware = (): Plugin => {
   let config: ResolvedConfig;
@@ -16,8 +17,9 @@ export const VitePluginUniMiddleware = (): Plugin => {
         return resolvedVirtualModuleId;
       }
     },
-    load(id) {
+    async load(id) {
       if (id === resolvedVirtualModuleId) {
+        const middlewares = await scanMiddlewares();
         const pagesJsonRaw = readFileSync(
           resolve(config.root, "src/pages.json"),
           {
@@ -25,10 +27,45 @@ export const VitePluginUniMiddleware = (): Plugin => {
           }
         );
         const pagesJson = parse(pagesJsonRaw);
-        console.log(pagesJson);
-        return `export const middlewares = {
-          global: 
+
+        const imports = middlewares.map(
+          (v) => `import ${v.pascalName} from "${v.path}";`
+        );
+        const global = pagesJson.middleware
+          ? pagesJson.middleware
+              .map((p: string) => {
+                const middleware = middlewares.find((v) => v.camelName === p);
+                if (middleware) {
+                  return middleware.pascalName;
+                }
+                return "";
+              })
+              .filter((v: string) => v)
+          : [];
+        const pages = pagesJson.pages
+          ? pagesJson.pages.map((page: any) => {
+              const pageMiddlewares = page.middleware
+                ? page.middleware
+                    .map((p: string) => {
+                      const middleware = middlewares.find(
+                        (v) => v.camelName === p
+                      );
+                      if (middleware) {
+                        return middleware.pascalName;
+                      }
+                      return "";
+                    })
+                    .filter((v: string) => v)
+                : [];
+              return `"${page.path}": [${pageMiddlewares.join(",")}]`;
+            })
+          : [];
+        const code = `${imports.join("\n")}
+        export const middlewares = {
+          global: [${global.join(",")}],
+          ${pages.join(",")}
         }`;
+        return code;
       }
     },
   };
