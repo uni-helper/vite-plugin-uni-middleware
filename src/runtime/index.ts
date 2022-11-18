@@ -10,7 +10,7 @@ export function createNavigationGuardPlugin(): Plugin {
   return {
     install(app) {
       app.mixin({
-        onShow() {
+        async onShow() {
           const pages = getCurrentPages<Page>();
           const page = pages[pages.length - 1];
           if (!page) return;
@@ -22,7 +22,7 @@ export function createNavigationGuardPlugin(): Plugin {
             );
 
             for (let middleware of pageMiddlewares) {
-              const result = middleware(to, from);
+              const result = await middleware(to, from);
               if (result === undefined) {
                 continue;
               } else if (typeof result === "boolean" && result) {

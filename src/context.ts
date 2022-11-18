@@ -45,7 +45,7 @@ export class Context {
   }
 
   get middlewareImports() {
-    return this.middlewares.map((v) => `import ${v.value} from "${v.path}";`);
+    return this.middlewares.map((v) => `import ${v.value} from "/${v.path}";`);
   }
 
   get globalMiddlewares() {

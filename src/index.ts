@@ -22,7 +22,7 @@ export const VitePluginUniMiddleware = (
       const pagesJsonPath = normalizePath(
         resolve(ctx.config.root, "src/pages.json")
       );
-      watcher.add([pagesJsonPath, options.middlewareDir]);
+      watcher.add(pagesJsonPath);
       const reloadModule = (module: ModuleNode | undefined, path = "*") => {
         if (module) {
           moduleGraph.invalidateModule(module);
@@ -40,13 +40,19 @@ export const VitePluginUniMiddleware = (
       };
 
       watcher.on("change", async (path) => {
-        // TODO: simple filter
+        path = normalizePath(path)
         if (pagesJsonPath === path || path.includes(options.middlewareDir)) {
           updateVirtualModule();
         }
       });
+      watcher.on("add", async (path) => {
+        path = normalizePath(path)
+        if (path.includes(options.middlewareDir)) {
+          updateVirtualModule();
+        }
+      });
       watcher.on("unlink", async (path) => {
-        // TODO: simple filter
+        path = normalizePath(path)
         if (path.includes(options.middlewareDir)) {
           updateVirtualModule();
         }
