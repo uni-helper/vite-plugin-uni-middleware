@@ -78,3 +78,17 @@ export {};
 }
 </route>
 ```
+
+## 工作方式
+
+- vite
+  1. 扫描 middlewareDir 和 pages.json
+  2. 提供虚拟模块并导出 middlewares
+- runtime
+  1. 混入页面生命周期 onShow
+  2. 调用 global middlewares
+  3. 调用 page middlewares
+  4. 根据返回结果执行拦截
+
+> **Warning**
+> 尽可能不要使用异步中间件，虽然最终会执行，但并不能阻止导航
