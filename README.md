@@ -89,5 +89,6 @@ If you added config for page, just only use route-block
   2. Call global middlewares
   3. Call page middlewares
   4. Intercept navigation based on the returned results
-     > **Warning**
-     > Do not use asynchronous middleware as much as possible. Although it will eventually be executed, it cannot intercept navigation
+
+> **Warning**
+> Do not use asynchronous middleware as much as possible. Although it will eventually be executed, it cannot intercept navigation
