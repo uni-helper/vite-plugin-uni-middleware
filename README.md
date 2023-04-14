@@ -1,16 +1,14 @@
 # @uni-helper/vite-plugin-uni-middleware
 
-**WIP** Use route middleware in uni-app with Vite.
+**WIP** 在 Vite 驱动的 uni-app 中使用路由中间件
 
-English | [简体中文](./README.zhCN.md)
-
-## Installation
+## 安装
 
 ```bash
 pnpm i -D @uni-helper/vite-plugin-uni-middleware
 ```
 
-## Usage
+## 使用
 
 ```ts
 // vite.config.ts
@@ -22,7 +20,7 @@ export default defineConfig({
 });
 ```
 
-Define the middleware in `src/middleware`
+在 `src/middleware` 中定义中间件
 
 ```ts
 // src/middleware/auth.ts
@@ -37,7 +35,7 @@ export default defineMiddleware((to, from) => {
 });
 ```
 
-Add middleware config on global or page in pages.json
+在 pages.json 中添加全局或页面的中间件配置
 
 ```json
 // pages.json
@@ -52,13 +50,13 @@ Add middleware config on global or page in pages.json
 }
 ```
 
-## Configuration
+## 配置
 
 see [types.ts](./src/types.ts)
 
-## Notes
+## 注意
 
-If you used [vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages), you will create `pages.d.ts` to define type of `middleware`
+如果你使用 [vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages), 创建 `pages.d.ts` 来声明 `middleware` 的类型
 
 ```ts
 declare module "@uni-helper/vite-plugin-uni-pages" {
@@ -69,7 +67,7 @@ declare module "@uni-helper/vite-plugin-uni-pages" {
 export {};
 ```
 
-If you added config for page, just only use route-block
+若要为页面添加配置，只需使用 route-block
 
 ```vue
 <route>
@@ -79,16 +77,16 @@ If you added config for page, just only use route-block
 </route>
 ```
 
-## How it works
+## 工作方式
 
 - vite
-  1. Scan middlewareDir and pages.json
-  2. Provide virtual modules and export middlewares
+  1. 扫描 middlewareDir 和 pages.json
+  2. 提供虚拟模块并导出 middlewares
 - runtime
-  1. Mixed in page lifecycle onShow
-  2. Call global middlewares
-  3. Call page middlewares
-  4. Intercept navigation based on the returned results
+  1. 混入页面生命周期 onShow
+  2. 调用 global middlewares
+  3. 调用 page middlewares
+  4. 根据返回结果执行拦截
 
 > **Warning**
-> Do not use asynchronous middleware as much as possible. Although it will eventually be executed, it cannot intercept navigation
+> 尽可能不要使用异步中间件，虽然最终会执行，但并不能阻止导航
