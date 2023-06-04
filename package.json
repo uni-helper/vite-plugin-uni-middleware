@@ -47,7 +47,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "play": "nr -C playground dev:h5",
+    "play": "npm run dev:h5 --prefix playground",
     "prepublishOnly": "pnpm build",
     "release": "bumpp && npm publish --access public"
   },
