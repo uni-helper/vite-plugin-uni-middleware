@@ -7,6 +7,8 @@ import { ResolvedOptions, UserOptions } from "./types";
 const resolveOptions = (userOptions: UserOptions): ResolvedOptions => {
   return {
     middlewareDir: "src/middleware",
+    pagesJsonPath: "src/pages.json",
+    programRoot: process.cwd(),
     ...userOptions,
   };
 };
@@ -20,7 +22,7 @@ export const VitePluginUniMiddleware = (
     name: "vite-plugin-uni-middleware",
     configureServer({ watcher, moduleGraph, ws }) {
       const pagesJsonPath = normalizePath(
-        resolve(ctx.config.root, "src/pages.json")
+        resolve(ctx.config.root, options.pagesJsonPath)
       );
       watcher.add(pagesJsonPath);
       const reloadModule = (module: ModuleNode | undefined, path = "*") => {

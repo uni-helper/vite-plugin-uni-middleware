@@ -4,5 +4,7 @@ import UniPages from "@uni-helper/vite-plugin-uni-pages";
 import UniMiddleware from "@uni-helper/vite-plugin-uni-middleware";
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [UniPages(), uni(), UniMiddleware()],
+  plugins: [UniPages(), uni(), /*UniMiddleware()*/, UniMiddleware({
+    middlewareDir: 'src/middleware'
+  })],
 });
