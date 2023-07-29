@@ -9,11 +9,10 @@ export const scanMiddlewares = async (options: ResolvedOptions) => {
   const files = await fg("**/*.(js|ts)", {
     ignore: ["node_modules", ".git", "**/__*__/*"],
     onlyFiles: true,
-    cwd: resolve(process.cwd(), options.middlewareDir),
+    cwd: resolve(options.programRoot, options.middlewareDir),
   });
   files.sort();
-  const cwd = process.cwd();
-  const dir = resolve(cwd, options.middlewareDir);
+  const dir = resolve(options.programRoot, options.middlewareDir);
   for (let file of files) {
     const filePath = join(dir, file);
     const dirNameParts = splitByCase(

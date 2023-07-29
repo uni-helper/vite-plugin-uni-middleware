@@ -24,7 +24,7 @@ export class Context {
     this.middlewares = await scanMiddlewares(this.options);
 
     const pagesJsonRaw = readFileSync(
-      resolve(this.config.root, "src/pages.json"),
+      resolve(this.config.root, this.options.pagesJsonPath),
       {
         encoding: "utf-8",
       }
