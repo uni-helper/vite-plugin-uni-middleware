@@ -53,3 +53,23 @@ export default defineMiddleware((to, from) => {
 ## 配置
 
 see [types.ts](./src/types.ts)
+
+## 待定
+
+- 使用 onShow 生命周期函数，目前使用的方式，即先跳转到页面，然后再执行中间件
+  - 优点
+    - 支持 TabBar 点击切换
+  - 缺点
+    - 无法阻塞页面执行生命周期，渲染；可以提供两个生命周期函数，分别在中间件执行前和执行后执行，让用户自主适配，但是这样脱离社区标准了。
+
+- 使用 uni.addInterceptor，即先执行中间件，然后再跳转页面
+  - 优点
+    - 运作方式符合正常思维和社区标准
+  - 缺点
+    - TabBar 点击切换无法拦截，但是调用 switchTab 反而又可以，需要用户自己去适配，容易逻辑混乱
+
+- 混合方式，即使用 uni.addInterceptor 拦截普通页面，使用 onShow 拦截 TabBar 页面，并放弃拦截 switchTab
+  - 优点
+    - 支持 TabBar 点击切换
+  - 缺点
+    - TabBar 页面和普通页面的运作行为不一致，增加用户心智负担
