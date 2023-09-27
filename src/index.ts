@@ -1,79 +1,36 @@
-import { resolve } from "path";
-import { ModuleNode, normalizePath, Plugin, ResolvedConfig } from "vite";
-import { virtualModuleId, resolvedVirtualModuleId } from "./constant";
-import { Context } from "./context";
-import { ResolvedOptions, UserOptions } from "./types";
+import { createFilter } from 'vite'
+import type { Plugin, ViteDevServer } from 'vite'
 
-const resolveOptions = (userOptions: UserOptions): ResolvedOptions => {
+import { Context } from './context'
+import type { UserOptions } from './types'
+import { resolvedVirtualModuleId, virtualModuleId, vitePluginName } from './constant'
+
+export function VitePluginUniMiddleware(options?: UserOptions): Plugin {
+  const ctx = new Context(options)
   return {
-    middlewareDir: "src/middleware",
-    pagesJsonPath: "src/pages.json",
-    programRoot: process.cwd(),
-    ...userOptions,
-  };
-};
-
-export const VitePluginUniMiddleware = (
-  userOptions: UserOptions = {}
-): Plugin => {
-  const options = resolveOptions(userOptions);
-  const ctx = new Context(options);
-  return {
-    name: "vite-plugin-uni-middleware",
-    configureServer({ watcher, moduleGraph, ws }) {
-      const pagesJsonPath = normalizePath(
-        resolve(ctx.config.root, options.pagesJsonPath)
-      );
-      watcher.add(pagesJsonPath);
-      const reloadModule = (module: ModuleNode | undefined, path = "*") => {
-        if (module) {
-          moduleGraph.invalidateModule(module);
-          if (ws) {
-            ws.send({
-              path,
-              type: "full-reload",
-            });
-          }
-        }
-      };
-      const updateVirtualModule = () => {
-        const module = moduleGraph.getModuleById(resolvedVirtualModuleId);
-        reloadModule(module);
-      };
-
-      watcher.on("change", async (path) => {
-        path = normalizePath(path)
-        if (pagesJsonPath === path || path.includes(options.middlewareDir)) {
-          updateVirtualModule();
-        }
-      });
-      watcher.on("add", async (path) => {
-        path = normalizePath(path)
-        if (path.includes(options.middlewareDir)) {
-          updateVirtualModule();
-        }
-      });
-      watcher.on("unlink", async (path) => {
-        path = normalizePath(path)
-        if (path.includes(options.middlewareDir)) {
-          updateVirtualModule();
-        }
-      });
-    },
+    name: vitePluginName,
+    enforce: 'pre',
     configResolved(_config) {
-      ctx.config = _config;
+      ctx.config = _config
     },
+    configureServer(server: ViteDevServer) {
+      ctx.setupServer(server)
+    },
+    transform(code, id) {
+      const filter = createFilter(`${ctx.options.cwd}/main.[tj]s`)
+      if (filter(id))
+        return ctx.transformMain(code, id)
+    },
+
     async resolveId(id) {
-      if (id === virtualModuleId) {
-        return resolvedVirtualModuleId;
-      }
+      if (id === virtualModuleId)
+        return resolvedVirtualModuleId
     },
     load(id) {
-      if (id === resolvedVirtualModuleId) {
-        return ctx.virtualModule();
-      }
+      if (id === resolvedVirtualModuleId)
+        return ctx.virtualModule()
     },
-  };
-};
+  }
+}
 
-export default VitePluginUniMiddleware;
+export default VitePluginUniMiddleware

@@ -1,30 +1,26 @@
 export interface Options {
   /**
-   * @default "src/middleware"
+   * @default process.env.UNI_INPUT_DIR || process.cwd()
    */
-  middlewareDir: string;
+  cwd: string
   /**
-   * @default "src/pages.json"
+   * @default "uni-middleware.d.ts"
    */
-  pagesJsonPath: string;
+  dts: string
   /**
-   * @default "process.cwd()"
+   * @default `${cwd}/middleware`
    */
-  programRoot: string;
+  middlewareDir: string
 }
 
 export interface UserOptions extends Partial<Options> {}
 
-export interface ResolvedOptions extends Options {}
+export interface ResolvedOptions extends Options {
+  pagesJsonPath: string
+}
 
-export interface Middleware {
-  path: string;
-  /**
-   * found name
-   */
-  name: string;
-  /**
-   * import name
-   */
-  value: string;
+export interface MiddlewareFile {
+  name: string
+  value: string
+  path: string
 }
