@@ -12,27 +12,27 @@ pnpm i -D @uni-helper/vite-plugin-uni-middleware
 
 ```ts
 // vite.config.ts
-import { defineConfig } from "vite";
-import Uni from "@dcloudio/vite-plugin-uni";
-import UniMiddleware from "@uni-helper/vite-plugin-uni-middleware";
+import { defineConfig } from 'vite'
+import Uni from '@dcloudio/vite-plugin-uni'
+import UniMiddleware from '@uni-helper/vite-plugin-uni-middleware'
+
 export default defineConfig({
   plugins: [Uni(), UniMiddleware()],
-});
+})
 ```
 
 在 `src/middleware` 中定义中间件
 
 ```ts
 // src/middleware/auth.ts
-import { defineMiddleware } from "@uni-helper/vite-plugin-uni-middleware/runtime";
-import { useStore } from "../store";
+import { defineMiddleware } from '@uni-helper/vite-plugin-uni-middleware/runtime'
+import { useStore } from '../store'
 
 export default defineMiddleware((to, from) => {
-  const store = useStore();
-  if (!store.isLogin) {
-    return "/pages/login/index";
-  }
-});
+  const store = useStore()
+  if (!store.isLogin)
+    return '/pages/login/index'
+})
 ```
 
 在 pages.json 中添加全局或页面的中间件配置
@@ -54,39 +54,22 @@ export default defineMiddleware((to, from) => {
 
 see [types.ts](./src/types.ts)
 
-## 注意
+## 待定
 
-如果你使用 [vite-plugin-uni-pages](https://github.com/uni-helper/vite-plugin-uni-pages), 创建 `pages.d.ts` 来声明 `middleware` 的类型
+- 使用 onShow 生命周期函数，目前使用的方式，即先跳转到页面，然后再执行中间件
+  - 优点
+    - 支持 TabBar 点击切换
+  - 缺点
+    - 无法阻塞页面执行生命周期，渲染；可以提供两个生命周期函数，分别在中间件执行前和执行后执行，让用户自主适配，但是这样脱离社区标准了。
 
-```ts
-declare module "@uni-helper/vite-plugin-uni-pages" {
-  export interface PagesConfig {
-    middleware: string[];
-  }
-}
-export {};
-```
+- 使用 uni.addInterceptor，即先执行中间件，然后再跳转页面
+  - 优点
+    - 运作方式符合正常思维和社区标准
+  - 缺点
+    - TabBar 点击切换无法拦截，但是调用 switchTab 反而又可以，需要用户自己去适配，容易逻辑混乱
 
-若要为页面添加配置，只需使用 route-block
-
-```vue
-<route>
-{
-  "middleware": ["auth"]
-}
-</route>
-```
-
-## 工作方式
-
-- vite
-  1. 扫描 middlewareDir 和 pages.json
-  2. 提供虚拟模块并导出 middlewares
-- runtime
-  1. 混入页面生命周期 onShow
-  2. 调用 global middlewares
-  3. 调用 page middlewares
-  4. 根据返回结果执行拦截
-
-> **Warning**
-> 尽可能不要使用异步中间件，虽然最终会执行，但并不能阻止导航
+- 混合方式，即使用 uni.addInterceptor 拦截普通页面，使用 onShow 拦截 TabBar 页面，并放弃拦截 switchTab
+  - 优点
+    - 支持 TabBar 点击切换
+  - 缺点
+    - TabBar 页面和普通页面的运作行为不一致，增加用户心智负担

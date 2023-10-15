@@ -1,10 +1,10 @@
-import type { ComponentPublicInstance } from "vue";
+import type { ComponentPublicInstance } from 'vue'
 
 export interface Page extends ComponentPublicInstance {
-  $mpType: string;
-  $pages: Record<string, any>;
-  $vm: Page;
-  route: string;
+  $mpType: string
+  $pages: Record<string, any>
+  $vm: Page
+  route: string
 }
 
 export type MiddlewareReturn =
@@ -12,8 +12,8 @@ export type MiddlewareReturn =
   | boolean
   | string
   | {
-      url: string;
-      method: "navigateTo" | "redirectTo" | "switchTab" | "reLaunch";
-      options: Record<string, any>;
-    };
-export type Middleware = (to: Page, from?: Page) => MiddlewareReturn | Promise<MiddlewareReturn>;
+    url: string
+    method?: 'navigateTo' | 'redirectTo' | 'switchTab' | 'reLaunch'
+    options?: Record<string, any>
+  }
+export type Middleware = (to: Page, from?: Page) => MiddlewareReturn | Promise<MiddlewareReturn>

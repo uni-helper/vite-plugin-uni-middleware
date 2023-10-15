@@ -1,5 +1,5 @@
-import { defineMiddleware } from "@uni-helper/vite-plugin-uni-middleware/runtime";
+import { defineMiddleware } from '../../../src/runtime'
 
 export default defineMiddleware((to, from) => {
-  console.log("global:", to, from);
-});
+  console.log('global:', to, from)
+})
