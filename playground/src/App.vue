@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
+import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
+
 onLaunch(() => {
-  console.log("App Launch");
-});
+  console.warn('App Launch')
+})
 onShow(() => {
-  console.log("App Show");
-});
+  console.warn('App Show')
+})
 onHide(() => {
-  console.log("App Hide");
-});
+  console.warn('App Hide')
+})
 </script>
+
 <style></style>

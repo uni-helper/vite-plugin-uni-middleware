@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import { useStore } from '../../store'
+
+const store = useStore()
+const pages = [
+  {
+    path: '/pages/auth/index',
+    name: 'Auth Page',
+  },
+  {
+    path: '/pages/login/index',
+    name: 'Login Page',
+  },
+]
+</script>
+
 <template>
   <view>
     <view>index page</view>
@@ -5,6 +21,7 @@
     <view>isVip: {{ store.isVip }}</view>
     <navigator
       v-for="nav in pages"
+      :key="nav.path"
       :url="nav.path"
       hover-class="navigator-hover"
     >
@@ -12,21 +29,3 @@
     </navigator>
   </view>
 </template>
-
-<script setup lang="ts">
-import { useStore } from "../../store";
-
-const store = useStore();
-const pages = [
-  {
-    path: "/pages/auth/index",
-    name: "Auth Page",
-  },
-  {
-    path: "/pages/login/index",
-    name: "Login Page",
-  },
-];
-</script>
-
-<route type="home"></route>
