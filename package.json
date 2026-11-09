@@ -2,7 +2,19 @@
   "name": "@uni-helper/vite-plugin-uni-middleware",
   "type": "module",
   "version": "0.0.1",
-  "packageManager": "pnpm@7.16.1",
+  "packageManager": "pnpm@12.18.0",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.18.0",
+      "onFail": "warn"
+    }
+  },
   "description": "Use route middleware in uni-app with Vite.",
   "author": "KeJun",
   "license": "MIT",
@@ -12,60 +24,73 @@
     "url": "git+https://github.com/uni-helper/vite-plugin-uni-middleware.git"
   },
   "bugs": "https://github.com/uni-helper/vite-plugin-uni-middleware/issues",
-  "keywords": [],
+  "keywords": [
+    "uni-app",
+    "vite-plugin",
+    "middleware",
+    "route"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
     },
     "./runtime": {
-      "types": "./dist/runtime/index.d.ts",
-      "require": "./dist/runtime/index.cjs",
-      "import": "./dist/runtime/index.js"
+      "import": {
+        "types": "./dist/runtime/index.d.mts",
+        "default": "./dist/runtime/index.mjs"
+      }
+    },
+    "./client": {
+      "types": "./client.d.ts"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./dist/index.d.ts"
-      ],
-      "runtime": [
-        "./dist/runtime/*",
-        "./dist/runtime/index.d.ts"
-      ]
-    }
-  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "files": [
+    "client.d.ts",
     "dist"
   ],
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "play": "npm run dev:h5 --prefix playground",
+    "build": "tsdown",
+    "build:play:h5": "pnpm -C playground run build:h5",
+    "dev:play:h5": "pnpm -C playground run dev:h5",
+    "build:play:mp-weixin": "pnpm -C playground run build:mp-weixin",
+    "dev:play:mp-weixin": "pnpm -C playground run dev:mp-weixin",
+    "dev": "tsdown --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm build",
-    "release": "bumpp && npm publish --access public"
+    "release": "bumpp"
   },
   "peerDependencies": {
+    "vite": "^5.0.0",
     "vue": ">=3.0.0"
   },
-  "devDependencies": {
-    "@dcloudio/types": "^3.0.19",
-    "@types/node": "^18.11.9",
-    "bumpp": "^8.2.1",
-    "tsup": "^6.5.0",
-    "typescript": "^4.9.3",
-    "vite": "^3.2.4",
-    "vue": "^3.2.45"
-  },
   "dependencies": {
-    "fast-glob": "^3.2.12",
-    "jsonc-parser": "^3.2.0",
-    "scule": "^1.0.0"
+    "jsonc-parser": "catalog:",
+    "scule": "catalog:",
+    "tinyglobby": "catalog:"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@dcloudio/types": "catalog:",
+    "@types/node": "catalog:",
+    "bumpp": "catalog:",
+    "eslint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:"
   }
 }

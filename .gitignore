@@ -10,3 +10,5 @@ logs
 node_modules
 temp
 pages.json
+# 由 vite-plugin-uni-pages 生成
+uni-pages.d.ts

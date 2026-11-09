@@ -1,15 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "esnext",
+    "target": "esnext",
     "lib": ["esnext"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@uni-helper/vite-plugin-uni-middleware/runtime": ["./src/runtime/index.ts"]
+    },
+    "resolveJsonModule": true,
+    "types": ["@dcloudio/types"],
     "strict": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
+    "esModuleInterop": true,
     "skipDefaultLibCheck": true,
-    "types": ["@dcloudio/types"]
-  }
+    "skipLibCheck": true
+  },
+  "include": ["src", "test", "client.d.ts", "tsdown.config.ts"]
 }
