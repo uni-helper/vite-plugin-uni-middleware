@@ -16,13 +16,11 @@
   <a href="https://github.com/ModyQyW"><img src="https://img.shields.io/badge/Maintainer-ModyQyW-blue?style=for-the-badge" alt="Maintainer"></a>
 </p>
 
-在 Vite 驱动的 uni-app 中使用路由中间件。
+在 Vite 驱动的 uni-app 中使用路由中间件。中间件写在 `src/middleware` 目录里，构建时由插件扫描并生成虚拟模块，运行时在跳转发生前执行。页面和全局都可以挂中间件，返回值决定放行、取消还是改道。
 
 不想看文档？直接问 AI 🤖 <a href="https://deepwiki.com/uni-helper/vite-plugin-uni-middleware"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 
-## 简介
-
-中间件写在 `src/middleware` 目录里，构建时由插件扫描并生成虚拟模块，运行时在跳转发生前执行。页面和全局都可以挂中间件，返回值决定放行、取消还是改道。
+> **请考虑持续[赞助](https://github.com/ModyQyW/sponsors)以维持该项目的持续健康发展，非常感谢！🙏**
 
 ## 安装
 
