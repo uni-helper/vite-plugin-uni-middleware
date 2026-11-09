@@ -9,6 +9,6 @@ lib-cov
 logs
 node_modules
 temp
-pages.json
-# 由 vite-plugin-uni-pages 生成
-uni-pages.d.ts
+# 由 vite-plugin-uni-pages 生成，只忽略 playground 里的产物
+/playground/src/pages.json
+/playground/uni-pages.d.ts

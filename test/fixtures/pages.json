@@ -1,0 +1,8 @@
+{
+  "middleware": ["global"],
+  "pages": [
+    { "path": "pages/index/index", "middleware": ["auth"] },
+    { "path": "pages/vip/index", "middleware": ["vip"] },
+    { "path": "pages/order/index", "middleware": ["vip", "auth"] }
+  ]
+}
