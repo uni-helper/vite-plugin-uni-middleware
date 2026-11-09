@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 256 256">
+  <title>uni-helper/vite-plugin-uni-middleware logo</title>
+  <g fill="none" stroke="#2B9939" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 40 92 L 216 92" opacity="0.5"/>
+    <path d="M 40 164 L 112 164 L 216 92"/>
+  </g>
+  <circle cx="112" cy="164" r="10" fill="#2B9939"/>
+</svg>
