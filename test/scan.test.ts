@@ -12,7 +12,8 @@ function options(middlewareDir: string): ResolvedOptions {
 it('derives middleware names from the file path', async () => {
   const files = await scanMiddlewares(options('middleware'))
 
-  expect(files.map(file => file.name)).toEqual(['auth', 'global', 'userProfile', 'userList', 'vip'])
+  // README 的「中间件名」一节列的就是这组名字
+  expect(files.map(file => file.name)).toEqual(['auth', 'blogPosts', 'global', 'userProfile', 'userList', 'vip'])
 })
 
 it('names an index file after its directory', async () => {
