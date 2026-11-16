@@ -57,7 +57,10 @@ export class Context {
   }
 
   get globalMiddlewares(): Middleware[] {
-    return this.findMiddlewaresByMiddlewareNameList(this.pagesJson.middleware)
+    return this.findMiddlewaresByMiddlewareNameList(
+      this.pagesJson.middleware,
+      'pages.json 顶层的 middleware',
+    )
   }
 
   get pagesMiddlewares(): { value: Middleware[], key: string }[] {
@@ -67,6 +70,7 @@ export class Context {
     return this.pagesJson.pages.map((page) => {
       const middlewares = this.findMiddlewaresByMiddlewareNameList(
         page.middleware,
+        `页面 ${page.path}`,
       )
       return {
         value: middlewares,
@@ -75,18 +79,27 @@ export class Context {
     })
   }
 
-  /** pages.json 里写的顺序就是执行顺序；同一个名字写了两遍也只跑一次 */
-  findMiddlewaresByMiddlewareNameList(names: string[] = []): Middleware[] {
+  /**
+   * pages.json 里写的顺序就是执行顺序；同一个名字写了两遍也只跑一次。
+   *
+   * 名字写错时直接抛错：跳过这一条会让中间件静默失效，静态资源、接口
+   * 鉴权这些依赖中间件的地方很难发现。
+   */
+  findMiddlewaresByMiddlewareNameList(names: string[] = [], where = 'pages.json'): Middleware[] {
     return [...new Set(names)].flatMap((name) => {
       const middleware = this.middlewares.find(m => m.name === name)
-      // 写错中间件名会静默不生效，开发期给出提示
       if (!middleware) {
-        console.warn(
-          `[vite-plugin-uni-middleware] middleware "${name}" not found in ${this.options.middlewareDir}`,
-        )
-        return []
+        throw new Error(this.missingMiddlewareMessage(name, where))
       }
       return [middleware]
     })
+  }
+
+  missingMiddlewareMessage(name: string, where: string): string {
+    const scanned = this.middlewares.map(m => m.name)
+    const candidates = scanned.length
+      ? `已扫描到的中间件包括 ${scanned.join('、')}`
+      : `${this.options.middlewareDir} 里没有扫描到任何中间件文件`
+    return `找不到中间件 "${name}"，引用位置为 ${where}，${candidates}`
   }
 }

@@ -1,0 +1,3 @@
+{
+  "pages": [{ "path": "pages/vip/index", "middleware": ["missing"] }]
+}

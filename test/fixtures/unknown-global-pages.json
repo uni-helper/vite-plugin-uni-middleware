@@ -1,0 +1,4 @@
+{
+  "middleware": ["missing"],
+  "pages": [{ "path": "pages/index/index" }]
+}

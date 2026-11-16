@@ -26,3 +26,21 @@ it('runs page middlewares in the order pages.json lists them', async () => {
 it('names the pages.json path when the file cannot be parsed', async () => {
   await expect(createContext('invalid-pages.json').virtualModule()).rejects.toThrow('invalid-pages.json')
 })
+
+it('fails and lists candidates when a global middleware name is unknown', async () => {
+  let message = ''
+  try {
+    await createContext('unknown-global-pages.json').virtualModule()
+  }
+  catch (error) {
+    message = (error as Error).message
+  }
+
+  expect(message).toContain('找不到中间件 "missing"')
+  expect(message).toContain('pages.json 顶层的 middleware')
+  expect(message).toContain('auth、blogPosts、global、userProfile、userList、vip')
+})
+
+it('names the page when a page middleware name is unknown', async () => {
+  await expect(createContext('unknown-page-pages.json').virtualModule()).rejects.toThrow('页面 pages/vip/index')
+})

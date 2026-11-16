@@ -35,7 +35,7 @@ pnpm release                  # 维护者发布：bumpp
 | 模块 | 职责 |
 | --- | --- |
 | `src/index.ts` | 插件入口：解析选项、注册虚拟模块、监听 pages.json 和 middlewareDir 触发整页刷新 |
-| `src/context.ts` | 组装虚拟模块代码：重扫中间件 + 解析 pages.json，拼 import 与 `middlewares` 映射，顺序按 `middleware` 数组；未知中间件名 warn；pages.json 解析失败直接抛错(否则页面级中间件会静默失效) |
+| `src/context.ts` | 组装虚拟模块代码：重扫中间件 + 解析 pages.json，拼 import 与 `middlewares` 映射，顺序按 `middleware` 数组；未知中间件名直接抛错并列出候选名；pages.json 解析失败直接抛错(否则页面级中间件会静默失效) |
 | `src/scan.ts` | 用 tinyglobby 扫描 `middlewareDir` 下 `**/*.(js\|ts)`，推导中间件名；重名时 warn 并保留先扫到的 |
 | `src/types.ts` | `Options`(middlewareDir / pagesJsonPath / programRoot)与 `Middleware` 元数据 |
 | `src/runtime/guard.ts` | 守卫实现，不 import 虚拟模块：拦截器注册、同步/异步中间件执行、`onShow` 兜底、防重入与防循环；依赖 `GuardUni` / `GuardPage` 注入 |
