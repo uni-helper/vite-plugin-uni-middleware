@@ -211,7 +211,7 @@ type MiddlewareReturn
 - 顶层 `middleware` 是全局中间件，每个页面都会跑。
 - `pages[].middleware` 只作用于这一页。
 - 全局中间件排在页面中间件前面；同一层里按 `middleware` 数组的顺序执行，同一个名字写两遍也只跑一次。
-- 名字在 `src/middleware` 里找不到时，构建会打印警告，这一条跳过。
+- 名字在 `src/middleware` 里找不到时，构建失败，终端列出已扫描到的名字。
 
 ```jsonc
 // src/pages.json
@@ -222,6 +222,35 @@ type MiddlewareReturn
     { "path": "pages/vip/index", "middleware": ["auth", "vip"] }
   ]
 }
+```
+
+### 中间件名
+
+中间件名不是文件名本身，而是按路径推导出来的。推导规则：
+
+1. 取文件名，去掉扩展名。
+2. 文件名是 `index` 时，改用所在目录名。
+3. 目录段从外往里拼到文件名前面，遇到和文件名第一段相同的目录段就停下。
+4. 拼好的各部分转 PascalCase，再转 camelCase。
+
+`pages.json` 里写的名字，就是第 4 步的结果。
+
+| 文件 | 中间件名 |
+| --- | --- |
+| `auth.ts` | `auth` |
+| `vip/index.ts` | `vip` |
+| `user/profile.ts` | `userProfile` |
+| `user/user-list.ts` | `userList` |
+| `blog/posts/index.ts` | `blogPosts` |
+
+`user/user-list.ts` 的目录段和文件名第一段都是 `user`，重复的部分会被去掉，只剩 `userList`。目录名和文件名都按大小写、`-`、`_` 切开，`user-list` 和 `userList` 等价。
+
+统一转成 camelCase，是为了让嵌套目录也能写成扁平的键：`vip/auth.ts` 对应 `vipAuth`，写进 `pages.json` 时不用关心分隔符用 `/`、`-` 还是 `.`。
+
+名字写错时构建失败，失败信息会写出是哪个页面引用的、以及所有可用的名字：
+
+```text
+[vite-plugin-uni-middleware] 找不到中间件 "hi-guard"，引用位置为 页面 pages/hi，已扫描到的中间件包括 auth、global、userProfile、userList、vip
 ```
 
 ### 配合 vite-plugin-uni-pages
@@ -262,7 +291,7 @@ definePage({
 </script>
 ```
 
-uni-pages 0.4 起移除了 `<route>` 自定义块，写在那里的字段进不了 `pages.json`，页面级配置只能写在 `definePage` 里。`middleware` 没有专门的类型声明，`PageItem` 带字符串索引签名，名字写错不会有编辑器提示，只能等构建时的警告。
+uni-pages 0.4 起移除了 `<route>` 自定义块，写在那里的字段进不了 `pages.json`，页面级配置只能写在 `definePage` 里。`middleware` 没有专门的类型声明，`PageItem` 带字符串索引签名，名字写错不会有编辑器提示，只能等构建期报错。
 
 `definePage` 是全局宏，编辑器要认识它得引用 uni-pages 的类型：
 
@@ -274,8 +303,8 @@ uni-pages 0.4 起移除了 `<route>` 自定义块，写在那里的字段进不�
 ## 工作方式
 
 - 构建期
-  1. 扫描 `middlewareDir`，按文件路径推导中间件名：文件名为 `index` 时改用目录名；目录段从外往里拼到文件名前面，遇到和文件名第一段相同的目录段就停下；最后转成 camelCase。`user/profile.ts` 变成 `userProfile`，`vip/index.ts` 变成 `vip`。
-  2. 读取 `pages.json`，把顶层 `middleware` 和 `pages[].middleware` 里的名字换成扫描到的函数。
+  1. 扫描 `middlewareDir`，按文件路径推导中间件名，规则见[中间件名](#中间件名)。
+  2. 读取 `pages.json`，把顶层 `middleware` 和 `pages[].middleware` 里的名字换成扫描到的函数。名字不存在时构建失败。
   3. 生成虚拟模块 `virtual:uni-middleware`。开发时改中间件或 pages.json 会触发整页刷新。
 - 运行期
   1. `main.ts` 先导入虚拟模块，把中间件表交给 `createNavigationGuardPlugin(middlewares)`，再用 `app.use()` 注册拦截器和 `onShow` 兜底。
@@ -284,7 +313,7 @@ uni-pages 0.4 起移除了 `<route>` 自定义块，写在那里的字段进不�
 
 中间件表经过 `main.ts` 传递。uni-app 小程序构建把 `node_modules` 里的代码打包进 `common/vendor`，项目文件各自一个 chunk；如果运行时自己导入虚拟模块，`common/vendor` 和中间件 chunk 会互相 `require`。
 
-pages.json 里写了不存在的中间件名，或者两个文件推导出同一个名字，构建期都会在终端给出警告。
+pages.json 里写了不存在的中间件名时，构建失败，失败信息列出可用的名字。两个文件推导出同一个名字时，先扫到的文件生效，构建期给出警告。
 
 
 ## 从 0.0.x 升级到 0.1
